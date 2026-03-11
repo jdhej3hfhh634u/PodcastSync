@@ -6,7 +6,8 @@ on:
       - 'v*.*.*'
 
 jobs:
-  build-mac:
+
+  build-mac-arm:
     runs-on: macos-latest
     steps:
       - uses: actions/checkout@v4
@@ -19,12 +20,32 @@ jobs:
       - name: Build .app
         run: pyinstaller PodcastSync.spec --noconfirm
       - name: Zip the .app
-        run: cd dist && zip -r PodcastSync-mac.zip PodcastSync.app
-      - name: Upload mac artifact
+        run: cd dist && zip -r PodcastSync-mac-AppleSilicon.zip PodcastSync.app
+      - name: Upload artifact
         uses: actions/upload-artifact@v4
         with:
-          name: mac-build
-          path: dist/PodcastSync-mac.zip
+          name: mac-arm-build
+          path: dist/PodcastSync-mac-AppleSilicon.zip
+
+  build-mac-intel:
+    runs-on: macos-13
+    steps:
+      - uses: actions/checkout@v4
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Install dependencies
+        run: pip install pyinstaller mutagen certifi
+      - name: Build .app
+        run: pyinstaller PodcastSync.spec --noconfirm
+      - name: Zip the .app
+        run: cd dist && zip -r PodcastSync-mac-Intel.zip PodcastSync.app
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: mac-intel-build
+          path: dist/PodcastSync-mac-Intel.zip
 
   build-windows:
     runs-on: windows-latest
@@ -38,22 +59,26 @@ jobs:
         run: pip install pyinstaller mutagen certifi
       - name: Build .exe
         run: pyinstaller PodcastSync.spec --noconfirm
-      - name: Upload windows artifact
+      - name: Upload artifact
         uses: actions/upload-artifact@v4
         with:
           name: windows-build
           path: dist/PodcastSync.exe
 
   release:
-    needs: [build-mac, build-windows]
+    needs: [build-mac-arm, build-mac-intel, build-windows]
     runs-on: ubuntu-latest
     permissions:
       contents: write
     steps:
-      - name: Download mac build
+      - name: Download mac arm build
         uses: actions/download-artifact@v4
         with:
-          name: mac-build
+          name: mac-arm-build
+      - name: Download mac intel build
+        uses: actions/download-artifact@v4
+        with:
+          name: mac-intel-build
       - name: Download windows build
         uses: actions/download-artifact@v4
         with:
@@ -62,6 +87,12 @@ jobs:
         uses: softprops/action-gh-release@v2
         with:
           files: |
-            PodcastSync-mac.zip
+            PodcastSync-mac-AppleSilicon.zip
+            PodcastSync-mac-Intel.zip
             PodcastSync.exe
-          generate_release_notes: true
+          body: |
+            ## Downloads
+            - **Mac Apple Silicon** (M1/M2/M3) — PodcastSync-mac-AppleSilicon.zip
+            - **Mac Intel** — PodcastSync-mac-Intel.zip
+            - **Windows** — PodcastSync.exe
+          generate_release_notes: false
