@@ -18,7 +18,7 @@ jobs:
       - name: Install dependencies
         run: pip install pyinstaller mutagen certifi
       - name: Build .app
-        run: pyinstaller PodcastSync.spec --noconfirm
+        run: pyinstaller PodcastSync.spec --noconfirm --target-arch arm64
       - name: Zip the .app
         run: cd dist && zip -r PodcastSync-mac-AppleSilicon.zip PodcastSync.app
       - name: Upload artifact
@@ -28,7 +28,7 @@ jobs:
           path: dist/PodcastSync-mac-AppleSilicon.zip
 
   build-mac-intel:
-    runs-on: macos-13
+    runs-on: macos-latest
     steps:
       - uses: actions/checkout@v4
       - name: Set up Python
@@ -38,7 +38,7 @@ jobs:
       - name: Install dependencies
         run: pip install pyinstaller mutagen certifi
       - name: Build .app
-        run: pyinstaller PodcastSync.spec --noconfirm
+        run: pyinstaller PodcastSync.spec --noconfirm --target-arch x86_64
       - name: Zip the .app
         run: cd dist && zip -r PodcastSync-mac-Intel.zip PodcastSync.app
       - name: Upload artifact
