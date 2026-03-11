@@ -1,0 +1,24 @@
+{
+  "podcasts": [
+    {
+      "name": "Good Hang with Amy Poehler",
+      "url": "https://feeds.megaphone.fm/good-hang-with-amy-poehler",
+      "back_episodes": 3,
+      "artwork": "https://is1-ssl.mzstatic.com/image/thumb/Podcasts221/v4/23/57/b4/2357b4a0-161e-5e71-f45d-fcdd2132d879/mza_5103093012759730305.jpg/600x600bb.jpg",
+      "author": "The Ringer"
+    },
+    {
+      "name": "The Buckleys",
+      "url": "https://feeds.megaphone.fm/GLT6099062880",
+      "back_episodes": 3,
+      "artwork": "https://is1-ssl.mzstatic.com/image/thumb/Podcasts221/v4/02/58/5e/02585e44-4f4b-6241-5415-2b14236e64ef/mza_7709076661123832524.jpg/600x600bb.jpg",
+      "author": "Platform Media"
+    }
+  ],
+  "ipod_path": "/Volumes/IPOD",
+  "auto_sync": true,
+  "check_interval": 30,
+  "last_sync": "2026-03-11 10:04:04",
+  "deletion_mode": "off",
+  "grace_days": 7
+}

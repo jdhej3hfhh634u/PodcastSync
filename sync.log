@@ -1,0 +1,125 @@
+[09:19:50] INFO: PodcastSync starting…
+[09:19:50] INFO: Auto-detected iPod at: /Volumes/IPOD
+[09:19:50] INFO: iPod detected! Starting sync…
+[09:19:50] INFO: Server running at http://127.0.0.1:5000
+[09:19:50] INFO: Sync complete! ✓
+[09:21:12] INFO: Checking feed: The Buckleys
+[09:21:12] ERROR:   Failed to fetch RSS for The Buckleys: <urlopen error [SSL: CERTIFICATE_VERIFY_FAILED] certificate verify failed: unable to get local issuer certificate (_ssl.c:1081)>
+[09:21:12] INFO: Sync complete! ✓
+[09:27:33] INFO: PodcastSync starting…
+[09:27:33] INFO: iPod detected! Starting sync…
+[09:27:33] INFO: Server running at http://127.0.0.1:5000
+[09:27:33] INFO: Checking feed: The Buckleys
+[09:27:33] INFO:   Downloading: I Need a '90s Doctor
+[09:27:53] INFO:   ✓ I Need a '90s Doctor.mp3
+[09:27:53] INFO:   Downloading: James Met Jay Cartwright
+[09:28:07] INFO:   ✓ James Met Jay Cartwright.mp3
+[09:28:07] INFO:   Downloading: I Don't Have Time For a Shower
+[09:28:25] INFO:   ✓ I Don't Have Time For a Shower.mp3
+[09:28:25] INFO: Sync complete! ✓
+[09:31:03] INFO: iPod disconnected.
+[09:33:46] INFO: PodcastSync starting…
+[09:33:46] INFO: Server running at http://127.0.0.1:5000
+[09:39:17] INFO: PodcastSync starting…
+[09:39:17] INFO: Server running at http://127.0.0.1:5000
+[09:43:39] INFO: PodcastSync starting…
+[09:43:39] INFO: Server running at http://localhost:5001
+[09:46:09] INFO: iPod detected! Starting sync…
+[09:46:09] INFO: Checking feed: The Buckleys
+[09:46:09] INFO:   Removing listened: I Need a '90s Doctor.mp3
+[09:46:09] INFO:   Removing listened: James Met Jay Cartwright.mp3
+[09:46:09] INFO:   Removing listened: I Don't Have Time For a Shower.mp3
+[09:46:09] INFO: Checking feed: Good Hang with Amy Poehler
+[09:46:09] INFO:   Downloading: Stories from ‘Saturday Night Live’
+[09:46:18] INFO:   ✓ Stories from _Saturday Night Live_.mp3
+[09:46:18] INFO:   Downloading: Favorite 'Parks and Rec' Memories
+[09:46:28] INFO:   ✓ Favorite 'Parks and Rec' Memories.mp3
+[09:46:28] INFO:   Downloading: What Makes the Guests of 'Good Hang' Laugh
+[09:46:36] INFO:   ✓ What Makes the Guests of 'Good Hang' Laugh.mp3
+[09:46:36] INFO: Sync complete! ✓
+[09:47:09] INFO: iPod disconnected.
+[09:50:05] INFO: PodcastSync starting…
+[09:50:05] INFO: Server running at http://localhost:5001
+[09:50:54] INFO: Checking feed: The Buckleys
+[09:50:54] INFO:   Cover art ready (141KB)
+[09:50:54] INFO: Checking feed: Good Hang with Amy Poehler
+[09:50:54] INFO:   Cover art ready (99KB)
+[09:50:54] INFO:   Removing listened: Stories from _Saturday Night Live_.mp3
+[09:50:54] INFO:   Removing listened: Favorite 'Parks and Rec' Memories.mp3
+[09:50:54] INFO:   Removing listened: What Makes the Guests of 'Good Hang' Laugh.mp3
+[09:50:54] INFO: Sync complete! ✓
+[09:51:04] INFO: Checking feed: The Buckleys
+[09:51:04] INFO:   Cover art ready (141KB)
+[09:51:04] INFO: Checking feed: Good Hang with Amy Poehler
+[09:51:04] INFO:   Cover art ready (99KB)
+[09:51:04] INFO: Sync complete! ✓
+[09:51:05] INFO: iPod detected! Starting sync…
+[09:51:05] INFO: Checking feed: The Buckleys
+[09:51:05] INFO:   Cover art ready (141KB)
+[09:51:05] INFO: Checking feed: Good Hang with Amy Poehler
+[09:51:05] INFO:   Cover art ready (99KB)
+[09:51:05] INFO: Sync complete! ✓
+[09:51:35] INFO: iPod disconnected.
+[09:55:45] INFO: PodcastSync starting…
+[09:55:45] INFO: Server running at http://localhost:5001
+[09:56:15] INFO: iPod detected! Starting sync…
+[09:56:15] INFO: Checking feed: The Buckleys
+[09:56:16] INFO:   Cover art ready (141KB)
+[09:56:16] INFO: Checking feed: Good Hang with Amy Poehler
+[09:56:16] INFO:   Cover art ready (99KB)
+[09:56:16] INFO: Sync complete! ✓
+[09:56:51] INFO: Checking feed: The Buckleys
+[09:56:51] INFO:   Cover art ready (141KB)
+[09:56:51] INFO: Checking feed: Good Hang with Amy Poehler
+[09:56:51] INFO:   Cover art ready (99KB)
+[09:56:51] INFO: Sync complete! ✓
+[09:57:15] INFO: iPod disconnected.
+[09:57:45] INFO: iPod detected! Starting sync…
+[09:57:45] INFO: Sync complete! ✓
+[09:58:22] INFO: Checking feed: Good Hang with Amy Poehler
+[09:58:23] INFO:   Cover art ready (99KB)
+[09:58:23] INFO: Checking feed: The Buckleys
+[09:58:23] INFO:   Cover art ready (141KB)
+[09:58:23] INFO: Sync complete! ✓
+[09:58:47] INFO: Checking feed: Good Hang with Amy Poehler
+[09:58:47] INFO:   Cover art ready (99KB)
+[09:58:47] INFO: Checking feed: The Buckleys
+[09:58:47] INFO:   Cover art ready (141KB)
+[09:58:47] INFO: Sync complete! ✓
+[10:02:02] INFO: PodcastSync starting…
+[10:02:02] INFO: Server running at http://localhost:5001
+[10:02:02] INFO: iPod detected! Starting sync…
+[10:02:02] INFO: Checking feed: Good Hang with Amy Poehler
+[10:02:03] INFO:   Cover art ready (99KB)
+[10:02:03] INFO:   3 episode(s) in feed, 3 in history
+[10:02:03] INFO:   Skipping (already synced): Stories from ‘Saturday Night Live’
+[10:02:03] INFO:   Skipping (already synced): Favorite 'Parks and Rec' Memories
+[10:02:03] INFO:   Skipping (already synced): What Makes the Guests of 'Good Hang' Laugh
+[10:02:03] INFO: Checking feed: The Buckleys
+[10:02:03] INFO:   Cover art ready (141KB)
+[10:02:03] INFO:   3 episode(s) in feed, 3 in history
+[10:02:03] INFO:   Skipping (already synced): I Need a '90s Doctor
+[10:02:03] INFO:   Skipping (already synced): James Met Jay Cartwright
+[10:02:03] INFO:   Skipping (already synced): I Don't Have Time For a Shower
+[10:02:03] INFO: Sync complete! ✓
+[10:02:12] INFO: All sync history cleared — episodes will re-download on next sync
+[10:02:26] INFO: Checking feed: Good Hang with Amy Poehler
+[10:02:26] INFO:   Cover art ready (99KB)
+[10:02:26] INFO:   3 episode(s) in feed, 0 in history
+[10:02:26] INFO:   Downloading: Stories from ‘Saturday Night Live’
+[10:02:40] INFO:   ✓ Stories from _Saturday Night Live_.mp3 + cover art
+[10:02:40] INFO:   Downloading: Favorite 'Parks and Rec' Memories
+[10:03:01] INFO:   ✓ Favorite 'Parks and Rec' Memories.mp3 + cover art
+[10:03:01] INFO:   Downloading: What Makes the Guests of 'Good Hang' Laugh
+[10:03:13] INFO:   ✓ What Makes the Guests of 'Good Hang' Laugh.mp3 + cover art
+[10:03:13] INFO: Checking feed: The Buckleys
+[10:03:13] INFO:   Cover art ready (141KB)
+[10:03:13] INFO:   3 episode(s) in feed, 0 in history
+[10:03:13] INFO:   Downloading: I Need a '90s Doctor
+[10:03:31] INFO:   ✓ I Need a '90s Doctor.mp3 + cover art
+[10:03:31] INFO:   Downloading: James Met Jay Cartwright
+[10:03:46] INFO:   ✓ James Met Jay Cartwright.mp3 + cover art
+[10:03:46] INFO:   Downloading: I Don't Have Time For a Shower
+[10:04:04] INFO:   ✓ I Don't Have Time For a Shower.mp3 + cover art
+[10:04:04] INFO: Sync complete! ✓
+[10:06:02] INFO: iPod disconnected.

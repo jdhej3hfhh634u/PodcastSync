@@ -1,0 +1,36 @@
+{
+  "Good Hang with Amy Poehler": {
+    "synced": [
+      "33224dfa",
+      "355fc98c",
+      "db9fdc5b"
+    ],
+    "files": [
+      "Stories from _Saturday Night Live_.mp3",
+      "Favorite 'Parks and Rec' Memories.mp3",
+      "What Makes the Guests of 'Good Hang' Laugh.mp3"
+    ],
+    "sync_times": {
+      "Stories from _Saturday Night Live_.mp3": "2026-03-11T10:02:40.186785",
+      "Favorite 'Parks and Rec' Memories.mp3": "2026-03-11T10:03:01.801584",
+      "What Makes the Guests of 'Good Hang' Laugh.mp3": "2026-03-11T10:03:13.339742"
+    }
+  },
+  "The Buckleys": {
+    "synced": [
+      "27bc45d2",
+      "f81d776f",
+      "11877b31"
+    ],
+    "files": [
+      "I Need a '90s Doctor.mp3",
+      "James Met Jay Cartwright.mp3",
+      "I Don't Have Time For a Shower.mp3"
+    ],
+    "sync_times": {
+      "I Need a '90s Doctor.mp3": "2026-03-11T10:03:31.337250",
+      "James Met Jay Cartwright.mp3": "2026-03-11T10:03:46.313446",
+      "I Don't Have Time For a Shower.mp3": "2026-03-11T10:04:04.179004"
+    }
+  }
+}
