@@ -1,8 +1,8 @@
 # -*- mode: python ; coding: utf-8 -*-
-# PyInstaller spec for PodcastSync
-# Usage: pyinstaller PodcastSync.spec
-
 import sys
+import os
+
+target_arch = os.environ.get('TARGET_ARCH', None)
 
 a = Analysis(
     ['app.py'],
@@ -15,30 +15,24 @@ a = Analysis(
     runtime_hooks=[],
     excludes=['tkinter', 'unittest', 'email.mime'],
     noarchive=False,
+    target_arch=target_arch,
 )
 
 pyz = PYZ(a.pure)
 
 if sys.platform == 'darwin':
-    # macOS: build a .app bundle
     exe = EXE(
         pyz, a.scripts, [],
         exclude_binaries=True,
         name='PodcastSync',
         debug=False,
-        bootloader_ignore_signals=False,
         strip=False,
-        upx=True,
-        console=False,   # no terminal window
+        upx=False,
+        console=False,
+        target_arch=target_arch,
         icon=None,
     )
-    coll = COLLECT(
-        exe, a.binaries, a.datas,
-        strip=False,
-        upx=True,
-        upx_exclude=[],
-        name='PodcastSync',
-    )
+    coll = COLLECT(exe, a.binaries, a.datas, strip=False, upx=False, name='PodcastSync')
     app = BUNDLE(
         coll,
         name='PodcastSync.app',
@@ -48,22 +42,16 @@ if sys.platform == 'darwin':
             'NSHighResolutionCapable': True,
             'CFBundleShortVersionString': '1.0.0',
             'CFBundleName': 'PodcastSync',
-            'LSUIElement': False,
         },
     )
 else:
-    # Windows: single .exe file
     exe = EXE(
         pyz, a.scripts, a.binaries, a.datas,
         name='PodcastSync',
         debug=False,
-        bootloader_ignore_signals=False,
         strip=False,
         upx=True,
-        upx_exclude=[],
-        runtime_tmpdir=None,
-        console=False,   # no terminal window
-        disable_windowed_traceback=False,
+        console=False,
         target_arch=None,
         icon=None,
     )
