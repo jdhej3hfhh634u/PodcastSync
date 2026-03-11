@@ -1749,6 +1749,18 @@ class Handler(BaseHTTPRequestHandler):
 # Entry point
 # ══════════════════════════════════════════════════════════════════════════════
 
+def start_server():
+    """Start the HTTP server and return (server, port, url)."""
+    for p in range(5000, 5010):
+        try:
+            server = HTTPServer(("127.0.0.1", p), Handler)
+            url = f"http://127.0.0.1:{p}"
+            return server, p, url
+        except OSError:
+            continue
+    return None, None, None
+
+
 if __name__ == "__main__":
     load_config()
     log("PodcastSync starting…")
@@ -1756,43 +1768,93 @@ if __name__ == "__main__":
     watcher_thread = threading.Thread(target=ipod_watcher, daemon=True)
     watcher_thread.start()
 
-    # Check for updates in background (silently, won't block startup)
     threading.Thread(target=check_for_updates, daemon=True).start()
 
-    server = None
-    port = 5000
-    for p in range(5000, 5010):
-        try:
-            # Bind to 0.0.0.0 so both localhost and 127.0.0.1 work.
-            # Brave blocks 127.0.0.1 but allows localhost.
-            server = HTTPServer(("0.0.0.0", p), Handler)
-            port = p
-            break
-        except OSError:
-            continue
+    server, port, url = start_server()
     if server is None:
         print("ERROR: Could not bind to any port 5000-5009.")
         sys.exit(1)
 
-    url = f"http://localhost:{port}"
     log(f"Server running at {url}")
 
-    def open_browser_at(u):
-        time.sleep(1.2)
-        try:
-            import webbrowser
-            webbrowser.open(u)
-        except Exception:
-            pass
+    # Start HTTP server in background thread
+    server_thread = threading.Thread(target=server.serve_forever, daemon=True)
+    server_thread.start()
 
-    threading.Thread(target=open_browser_at, args=(url,), daemon=True).start()
-
-    print("\n" + "="*50)
-    print(f"  PodcastSync is running!")
-    print(f"  Open: {url}")
-    print( "  Press Ctrl+C to stop.")
-    print("="*50 + "\n")
+    # ── Try to open as a native app window using pywebview ────────────────────
+    # pywebview wraps the UI in a native macOS/Windows window with a dock icon.
+    # Falls back to opening in the default browser if not installed.
     try:
-        server.serve_forever()
-    except KeyboardInterrupt:
-        print("\nStopped.")
+        import webview
+
+        # Find the icon file next to this script (works both dev and bundled)
+        icon_path = None
+        if sys.platform == "darwin":
+            for candidate in [
+                BASE_DIR / "icon_512.png",
+                Path(sys.executable).parent.parent / "Resources" / "icon_512.png",
+            ]:
+                if candidate.exists():
+                    icon_path = str(candidate)
+                    break
+        elif sys.platform == "win32":
+            for candidate in [
+                BASE_DIR / "icon.ico",
+                Path(sys.executable).parent / "icon.ico",
+            ]:
+                if candidate.exists():
+                    icon_path = str(candidate)
+                    break
+
+        print("\n" + "="*50)
+        print(f"  PodcastSync v{VERSION}")
+        print(f"  Running as native app window")
+        print("="*50 + "\n")
+
+        # Small delay so server is ready before webview loads
+        time.sleep(0.6)
+
+        window = webview.create_window(
+            title=f"PodcastSync",
+            url=url,
+            width=1100,
+            height=760,
+            min_size=(800, 600),
+            background_color="#0e0e0e",
+        )
+
+        # On macOS, set dock icon via AppKit if available
+        if sys.platform == "darwin" and icon_path:
+            try:
+                from AppKit import NSApplication, NSImage
+                app = NSApplication.sharedApplication()
+                img = NSImage.alloc().initWithContentsOfFile_(icon_path)
+                if img:
+                    app.setApplicationIconImage_(img)
+            except Exception:
+                pass  # AppKit not available in all environments
+
+        webview.start(debug=False)
+
+    except ImportError:
+        # pywebview not installed — fall back to browser
+        print("\n" + "="*50)
+        print(f"  PodcastSync v{VERSION} is running!")
+        print(f"  Open: {url}")
+        print(f"  (Install pywebview for native app window)")
+        print(f"  Press Ctrl+C to stop.")
+        print("="*50 + "\n")
+
+        def open_browser():
+            time.sleep(1.0)
+            try:
+                import webbrowser
+                webbrowser.open(url)
+            except Exception:
+                pass
+
+        threading.Thread(target=open_browser, daemon=True).start()
+        try:
+            server.serve_forever()
+        except KeyboardInterrupt:
+            print("\nStopped.")

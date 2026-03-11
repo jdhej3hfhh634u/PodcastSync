@@ -1,20 +1,28 @@
 # -*- mode: python ; coding: utf-8 -*-
-# PyInstaller spec for PodcastSync
-# Usage: pyinstaller PodcastSync.spec
-
 import sys
 import os
 
-# TARGET_ARCH env var controls cross-compilation on macOS
-# Set to 'arm64' or 'x86_64' in the GitHub Actions workflow
 target_arch = os.environ.get('TARGET_ARCH', None)
 
 a = Analysis(
     ['app.py'],
     pathex=[],
     binaries=[],
-    datas=[],
-    hiddenimports=['mutagen', 'mutagen.id3', 'certifi'],
+    datas=[
+        ('icon_16.png',  '.'),
+        ('icon_32.png',  '.'),
+        ('icon_64.png',  '.'),
+        ('icon_128.png', '.'),
+        ('icon_256.png', '.'),
+        ('icon_512.png', '.'),
+        ('icon.ico',     '.'),
+    ],
+    hiddenimports=[
+        'mutagen', 'mutagen.id3', 'certifi',
+        'webview', 'webview.platforms.cocoa',
+        'webview.platforms.winforms',
+        'AppKit', 'Foundation',
+    ],
     hookspath=[],
     hooksconfig={},
     runtime_hooks=[],
@@ -31,30 +39,25 @@ if sys.platform == 'darwin':
         exclude_binaries=True,
         name='PodcastSync',
         debug=False,
-        bootloader_ignore_signals=False,
         strip=False,
         upx=False,
         console=False,
         target_arch=target_arch,
-        icon=None,
+        icon='icon_512.png',
     )
-    coll = COLLECT(
-        exe, a.binaries, a.datas,
-        strip=False,
-        upx=False,
-        upx_exclude=[],
-        name='PodcastSync',
-    )
+    coll = COLLECT(exe, a.binaries, a.datas, strip=False, upx=False, name='PodcastSync')
     app = BUNDLE(
         coll,
         name='PodcastSync.app',
-        icon=None,
+        icon='icon_512.png',
         bundle_identifier='com.podcastsync.app',
         info_plist={
             'NSHighResolutionCapable': True,
-            'CFBundleShortVersionString': '1.0.7',
+            'NSRequiresAquaSystemAppearance': False,
+            'CFBundleShortVersionString': '1.0.8',
             'CFBundleName': 'PodcastSync',
-            'LSUIElement': False,
+            'CFBundleDisplayName': 'PodcastSync',
+            'LSMinimumSystemVersion': '10.13.0',
         },
     )
 else:
@@ -62,13 +65,9 @@ else:
         pyz, a.scripts, a.binaries, a.datas,
         name='PodcastSync',
         debug=False,
-        bootloader_ignore_signals=False,
         strip=False,
         upx=True,
-        upx_exclude=[],
-        runtime_tmpdir=None,
         console=False,
-        disable_windowed_traceback=False,
         target_arch=None,
-        icon=None,
+        icon='icon.ico',
     )

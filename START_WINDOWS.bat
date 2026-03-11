@@ -29,6 +29,11 @@ if errorlevel 1 (
     echo  Installing mutagen (for cover art + ID3 tags)...
     python -m pip install mutagen --quiet
 )
+python -c "import webview" >nul 2>&1
+if errorlevel 1 (
+    echo  Installing pywebview (for native app window)...
+    python -m pip install pywebview --quiet
+)
 
 echo  Starting PodcastSync...
 echo  Your browser will open automatically.

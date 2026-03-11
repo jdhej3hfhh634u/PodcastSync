@@ -33,6 +33,10 @@ $PY -c "import mutagen" 2>/dev/null || {
     echo " Installing mutagen (for cover art + ID3 tags)..."
     $PY -m pip install mutagen --quiet 2>/dev/null || $PY -m pip install mutagen --quiet --break-system-packages 2>/dev/null
 }
+$PY -c "import webview" 2>/dev/null || {
+    echo " Installing pywebview (for native app window)..."
+    $PY -m pip install pywebview --quiet 2>/dev/null || $PY -m pip install pywebview --quiet --break-system-packages 2>/dev/null
+}
 
 echo " Starting PodcastSync..."
 echo " Your browser will open automatically."
