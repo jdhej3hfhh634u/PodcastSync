@@ -17,8 +17,10 @@ jobs:
           python-version: '3.11'
       - name: Install dependencies
         run: pip install pyinstaller mutagen certifi
-      - name: Build .app
-        run: pyinstaller PodcastSync.spec --noconfirm --target-arch arm64
+      - name: Build .app (Apple Silicon)
+        env:
+          TARGET_ARCH: arm64
+        run: pyinstaller PodcastSync.spec --noconfirm
       - name: Zip the .app
         run: cd dist && zip -r PodcastSync-mac-AppleSilicon.zip PodcastSync.app
       - name: Upload artifact
@@ -37,8 +39,10 @@ jobs:
           python-version: '3.11'
       - name: Install dependencies
         run: pip install pyinstaller mutagen certifi
-      - name: Build .app
-        run: pyinstaller PodcastSync.spec --noconfirm --target-arch x86_64
+      - name: Build .app (Intel)
+        env:
+          TARGET_ARCH: x86_64
+        run: pyinstaller PodcastSync.spec --noconfirm
       - name: Zip the .app
         run: cd dist && zip -r PodcastSync-mac-Intel.zip PodcastSync.app
       - name: Upload artifact
