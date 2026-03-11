@@ -20,6 +20,13 @@ from pathlib import Path
 from datetime import datetime
 from http.server import HTTPServer, BaseHTTPRequestHandler
 
+# ── Version & update config ────────────────────────────────────────────────────
+VERSION       = "1.0.0"
+GITHUB_USER   = "jdhej3hfhh634u"
+GITHUB_REPO   = "PodcastSync"
+RELEASES_URL  = f"https://api.github.com/repos/{GITHUB_USER}/{GITHUB_REPO}/releases/latest"
+RELEASES_PAGE = f"https://github.com/{GITHUB_USER}/{GITHUB_REPO}/releases/latest"
+
 # Fix SSL certificate verification on macOS where Python doesn't use system certs
 try:
     import certifi
@@ -544,6 +551,56 @@ def run_sync(ipod_path=None):
 # Background watcher thread
 # ══════════════════════════════════════════════════════════════════════════════
 
+# ══════════════════════════════════════════════════════════════════════════════
+# Auto-update checker
+# ══════════════════════════════════════════════════════════════════════════════
+
+_update_info = {"available": False, "latest": None, "url": None}
+
+def parse_version(v):
+    """Turn '1.2.3' into (1, 2, 3) for comparison. Strips leading 'v'."""
+    v = v.lstrip("v").strip()
+    try:
+        return tuple(int(x) for x in v.split(".")[:3])
+    except Exception:
+        return (0, 0, 0)
+
+def check_for_updates():
+    """Silently check GitHub releases API for a newer version."""
+    global _update_info
+    try:
+        req = urllib.request.Request(
+            RELEASES_URL,
+            headers={"User-Agent": f"PodcastSync/{VERSION}",
+                     "Accept": "application/vnd.github+json"}
+        )
+        with urllib.request.urlopen(req, timeout=8, context=SSL_CONTEXT) as resp:
+            data = json.loads(resp.read())
+        latest_tag = data.get("tag_name", "")
+        latest_ver = parse_version(latest_tag)
+        current_ver = parse_version(VERSION)
+        if latest_ver > current_ver:
+            # Find the first asset that looks like a zip or exe
+            assets = data.get("assets", [])
+            dl_url = next(
+                (a["browser_download_url"] for a in assets
+                 if a["name"].endswith((".zip", ".exe", ".dmg"))),
+                RELEASES_PAGE
+            )
+            _update_info = {
+                "available": True,
+                "latest": latest_tag,
+                "current": VERSION,
+                "url": dl_url,
+                "release_page": RELEASES_PAGE,
+                "body": data.get("body", "")[:400],
+            }
+            log(f"Update available: {latest_tag} (you have v{VERSION})", "WARN")
+        else:
+            _update_info = {"available": False, "latest": latest_tag, "current": VERSION}
+    except Exception as e:
+        pass  # silently ignore — no internet, rate limit, etc.
+
 watcher_active = True
 
 def ipod_watcher():
@@ -635,6 +692,7 @@ HTML = r"""<!DOCTYPE html>
   .logo-icon { width: 36px; height: 36px; background: var(--accent); border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 18px; }
   .logo h1 { font-family: var(--mono); font-size: 1.1rem; font-weight: 700; letter-spacing: -0.3px; }
   .logo span { font-size: 0.7rem; color: var(--muted); display: block; }
+  .version-badge { font-family: var(--mono); font-size: 0.62rem; color: var(--muted); background: var(--surface2); border: 1px solid var(--border); border-radius: 4px; padding: 1px 5px; margin-left: 4px; vertical-align: middle; }
   .header-right { display: flex; align-items: center; gap: 12px; }
   .ipod-pill { display: flex; align-items: center; gap: 8px; background: var(--surface2); border: 1px solid var(--border); border-radius: 20px; padding: 5px 12px; font-family: var(--mono); font-size: 0.72rem; color: var(--text2); }
   .dot { width: 7px; height: 7px; border-radius: 50%; background: var(--muted); flex-shrink: 0; }
@@ -643,6 +701,11 @@ HTML = r"""<!DOCTYPE html>
   @keyframes blink { 0%,100%{opacity:1} 50%{opacity:0.3} }
   .theme-btn { background: var(--surface2); border: 1px solid var(--border); border-radius: 8px; color: var(--text); cursor: pointer; font-size: 1.1rem; width: 36px; height: 36px; display: flex; align-items: center; justify-content: center; transition: background 0.2s; }
   .theme-btn:hover { background: var(--border); }
+  .update-banner { background: linear-gradient(90deg,#2a1f00,#1a2a00); border-bottom: 1px solid #604010; padding: 9px 28px; display: flex; align-items: center; gap: 14px; font-family: var(--mono); font-size: 0.75rem; color: #ffd080; }
+  .update-banner a { color: #ffb347; font-weight: 700; }
+  .update-banner .dismiss { margin-left:auto; cursor:pointer; color:var(--muted); font-size:1rem; background:none; border:none; }
+  [data-theme="light"] .update-banner { background: linear-gradient(90deg,#fffbe6,#f6ffe6); border-bottom-color: #e0c060; color: #7a5a00; }
+  [data-theme="light"] .update-banner a { color: #c07000; }
   .tab-bar { background: var(--surface); border-bottom: 1px solid var(--border); display: flex; padding: 0 28px; gap: 4px; }
   .tab { background: none; border: none; border-bottom: 2px solid transparent; color: var(--muted); cursor: pointer; font-family: var(--mono); font-size: 0.75rem; letter-spacing: 1px; padding: 12px 16px 10px; text-transform: uppercase; transition: color 0.2s, border-color 0.2s; }
   .tab:hover { color: var(--text); }
@@ -747,11 +810,18 @@ HTML = r"""<!DOCTYPE html>
 </head>
 <body>
 
+<div id="updateBanner" style="display:none" class="update-banner">
+  🆕 <strong id="updateVersion"></strong> is available —
+  <a id="updateLink" href="#" target="_blank">Download now</a>
+  <span style="color:var(--muted);margin:0 6px">·</span>
+  <span id="updateNotes" style="opacity:0.75;max-width:400px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap"></span>
+  <button class="dismiss" onclick="dismissUpdate()" title="Dismiss">✕</button>
+</div>
 <header>
   <div class="logo">
     <div class="logo-icon">🎙</div>
     <div>
-      <h1>PodcastSync</h1>
+      <h1>PodcastSync <span class="version-badge" id="versionBadge">v?</span></h1>
       <span>for Rockbox iPod Classic</span>
     </div>
   </div>
@@ -910,6 +980,18 @@ HTML = r"""<!DOCTYPE html>
     </div>
   </div>
   <div class="card">
+    <div class="card-title">About</div>
+    <div class="toggle-row">
+      <div>
+        <div class="toggle-label">Version</div>
+        <div class="toggle-desc">PodcastSync <span id="settingsVersion"></span> — Rockbox iPod Syncer</div>
+      </div>
+      <button class="secondary" onclick="checkUpdateNow()" id="checkUpdateBtn" style="white-space:nowrap">Check for updates</button>
+    </div>
+    <div id="updateStatusMsg" style="font-family:var(--mono);font-size:0.72rem;color:var(--muted);margin-top:10px;display:none"></div>
+  </div>
+
+  <div class="card">
     <div class="card-title">Appearance</div>
     <div class="toggle-row">
       <div>
@@ -980,6 +1062,12 @@ function applyTheme(t) {
   localStorage.setItem('ps_theme', t);
 }
 function toggleTheme() { applyTheme(getTheme() === 'dark' ? 'light' : 'dark'); }
+
+function dismissUpdate() {
+  sessionStorage.setItem('updateDismissed', '1');
+  const b = document.getElementById('updateBanner');
+  if (b) b.style.display = 'none';
+}
 function toggleThemeFromCheckbox() {
   applyTheme(document.getElementById('lightModeToggle').checked ? 'light' : 'dark');
 }
@@ -1031,6 +1119,25 @@ function renderAll() {
   const as = document.getElementById('autoSync');
   if (as) as.checked = !!s.config.auto_sync;
   renderDeletionUI(s.config.deletion_mode || 'grace', s.config.grace_days || 7);
+
+  // Version badge
+  const vb = document.getElementById('versionBadge');
+  if (vb && s.version) vb.textContent = 'v' + s.version;
+  const sv = document.getElementById('settingsVersion');
+  if (sv && s.version) sv.textContent = 'v' + s.version;
+
+  // Update banner
+  if (s.update && s.update.available && !sessionStorage.getItem('updateDismissed')) {
+    const banner = document.getElementById('updateBanner');
+    if (banner && banner.style.display === 'none') {
+      document.getElementById('updateVersion').textContent = s.update.latest;
+      const link = document.getElementById('updateLink');
+      link.href = s.update.release_page || s.update.url || '#';
+      const notes = document.getElementById('updateNotes');
+      if (notes && s.update.body) notes.textContent = s.update.body.split('\n')[0];
+      banner.style.display = 'flex';
+    }
+  }
 
   const list = document.getElementById('podcastList');
   const pods = s.config.podcasts || [];
@@ -1111,6 +1218,36 @@ async function saveDeletion() {
   const days = parseInt(document.getElementById('graceDays')?.value) || 7;
   await api('/api/config', 'POST', { deletion_mode: mode, grace_days: days });
   renderDeletionUI(mode, days);
+}
+
+async function checkUpdateNow() {
+  const btn = document.getElementById('checkUpdateBtn');
+  const msg = document.getElementById('updateStatusMsg');
+  btn.textContent = 'Checking…'; btn.disabled = true;
+  msg.style.display = 'none';
+  await api('/api/check-update', 'POST');
+  // Poll for result — server does the check in a background thread
+  let attempts = 0;
+  const poll = setInterval(async () => {
+    attempts++;
+    const s = await api('/api/state');
+    if (!s) { clearInterval(poll); btn.textContent = 'Check for updates'; btn.disabled = false; return; }
+    if (s.update && s.update.latest) {
+      clearInterval(poll);
+      btn.textContent = 'Check for updates'; btn.disabled = false;
+      msg.style.display = 'block';
+      if (s.update.available) {
+        msg.style.color = 'var(--warn)';
+        msg.innerHTML = '🆕 ' + s.update.latest + ' is available — <a href="' + (s.update.release_page||'#') + '" target="_blank" style="color:var(--accent)">Download</a>';
+        sessionStorage.removeItem('updateDismissed');
+        refresh();
+      } else {
+        msg.style.color = 'var(--success)';
+        msg.textContent = '✓ You are on the latest version (v' + (s.version||'?') + ')';
+      }
+    }
+    if (attempts > 12) { clearInterval(poll); btn.textContent = 'Check for updates'; btn.disabled = false; msg.style.display = 'block'; msg.textContent = 'Could not reach update server.'; msg.style.color = 'var(--muted)'; }
+  }, 1000);
 }
 async function addPodcastManual() {
   const name=document.getElementById('newName').value.trim();
@@ -1514,6 +1651,8 @@ class Handler(BaseHTTPRequestHandler):
                 "ipod_connected": connected,
                 "sync_running": sync_running,
                 "log": sync_log[-100:],
+                "version": VERSION,
+                "update": _update_info,
             })
         elif self.path.startswith("/api/search"):
             from urllib.parse import urlparse, parse_qs
@@ -1534,6 +1673,9 @@ class Handler(BaseHTTPRequestHandler):
             if not sync_running:
                 threading.Thread(target=run_sync, daemon=True).start()
             self.send_json({"ok": True})
+        elif self.path == "/api/check-update":
+            threading.Thread(target=check_for_updates, daemon=True).start()
+            self.send_json({"ok": True, "checking": True})
         elif self.path == "/api/detect":
             path = detect_ipod_auto()
             self.send_json({"path": path})
@@ -1613,6 +1755,9 @@ if __name__ == "__main__":
 
     watcher_thread = threading.Thread(target=ipod_watcher, daemon=True)
     watcher_thread.start()
+
+    # Check for updates in background (silently, won't block startup)
+    threading.Thread(target=check_for_updates, daemon=True).start()
 
     server = None
     port = 5000
