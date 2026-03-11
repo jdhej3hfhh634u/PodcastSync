@@ -21,7 +21,7 @@ from datetime import datetime
 from http.server import HTTPServer, BaseHTTPRequestHandler
 
 # ── Version & update config ────────────────────────────────────────────────────
-VERSION       = "1.0.0"
+VERSION       = "1.0.7"
 GITHUB_USER   = "jdhej3hfhh634u"
 GITHUB_REPO   = "PodcastSync"
 RELEASES_URL  = f"https://api.github.com/repos/{GITHUB_USER}/{GITHUB_REPO}/releases/latest"
